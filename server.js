@@ -1,15 +1,20 @@
-const express = require('express');
+const express = require("express");
+const mongoose = require("mongoose");
+require('dotenv').config();
+
 const app = express();
-const mongoose = require('mongoose')
-
-mongoose.connect('mongodb://localhost/subscribers');
-const db = mongoose.connection
-db.on('error', (error) => {
-    console.error(error);
-
-})
-db.once('open', () => console.log('connected to MongoDB'));
 
 app.listen(3000, () => {
-    console.log('server started')
-})
+  console.log(`### server started ${process.env.MONGO_USERNAME}`);
+});
+
+app.get("/", (req, res) => {
+  res.send("### Welcome to the server!");
+});
+
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.v9bbb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
+  )
+  .then(() => console.log(`### Connected!`))
+  .catch((err) => console.log("### db connection error", err));
