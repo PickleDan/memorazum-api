@@ -1,15 +1,23 @@
 const express = require("express");
 const mongoose = require("mongoose");
-require('dotenv').config();
+const User = require("./models/user.model");
+
+require("dotenv").config();
 
 const app = express();
 
-app.listen(3000, () => {
-  console.log(`### server started ${process.env.MONGO_USERNAME}`);
-});
+app.listen(3000, () => {});
 
-app.get("/", (req, res) => {
-  res.send("### Welcome to the server!");
+// Middleware для обработки JSON
+app.use(express.json());
+
+app.post("/api/users", async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 mongoose
