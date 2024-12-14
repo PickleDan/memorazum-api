@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const User = require("./models/user.model");
+const userRouter = require("./routes/user.route");
 
 require("dotenv").config();
 
@@ -8,71 +8,16 @@ const app = express();
 
 app.listen(3000, () => {});
 
-// Middleware для обработки JSON
+// Middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-app.post("/api/users", async (req, res) => {
-  try {
-    const user = await User.create(req.body);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.get("/api/users", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.status(200).json(users);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.get("/api/user/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findById(id);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.put("/api/user/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByIdAndUpdate(id, req.body);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const updatedUser = await User.findByIdAndUpdate(id);
-    res.status(200).json(updatedUser);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-app.delete("/api/user/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findByIdAndDelete(id);
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({ message: "User deleted" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// Routes
+app.use("/api/users", userRouter);
 
 mongoose
   .connect(
     `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.v9bbb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
   )
-  .then(() => console.log(`### Connected!`))
-  .catch((err) => console.log("### db connection error", err));
+  .then(() => console.log(`Connected!`))
+  .catch((err) => console.log("DB connection error", err));
