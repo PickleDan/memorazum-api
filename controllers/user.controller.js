@@ -1,4 +1,4 @@
-const User = require("../models/user.model");
+import {User} from "../models/user.model.js";
 
 const createUser = async (req, res) => {
   try {
@@ -59,7 +59,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = {
+export const userController = {
   getUsers,
   getUser,
   updateUser,
